@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { api, type Profile } from '../api'
+import { isDemoMode, DEMO_PROFILES } from '../demoData'
 
 const INTENT_LABEL: Record<string, string> = {
   talk_first: '💬 Talk first',
@@ -18,6 +19,11 @@ export default function Discover() {
   const load = useCallback(async (off: number) => {
     setLoading(true)
     try {
+      if (isDemoMode()) {
+        setProfiles(DEMO_PROFILES)
+        setLoading(false)
+        return
+      }
       const { profiles: p } = await api.discover(off)
       if (p.length === 0) {
         setEmpty(true)
@@ -35,6 +41,16 @@ export default function Discover() {
   async function handleSwipe(profile: Profile, liked: boolean) {
     const remaining = profiles.filter(p => p.id !== profile.id)
     setProfiles(remaining)
+
+    if (isDemoMode()) {
+      // Demo: trigger match on 2nd like
+      if (liked && profile.id === 'demo-2') {
+        setMatchAlert(true)
+        setTimeout(() => setMatchAlert(false), 4000)
+      }
+      if (remaining.length === 0) setEmpty(true)
+      return
+    }
 
     try {
       const result = await api.swipe(profile.id, liked)

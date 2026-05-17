@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api, type Match } from '../api'
+import { isDemoMode, DEMO_MATCH } from '../demoData'
 
 const INTENT_LABEL: Record<string, string> = {
   talk_first: '💬 Talk first',
@@ -13,6 +14,11 @@ export default function Matches() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (isDemoMode()) {
+      setMatches([DEMO_MATCH])
+      setLoading(false)
+      return
+    }
     api.matches()
       .then(({ matches: m }) => setMatches(m))
       .finally(() => setLoading(false))

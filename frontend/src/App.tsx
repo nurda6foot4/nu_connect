@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import WebApp from '@twa-dev/sdk'
 import { api } from './api'
+import { enableDemoMode } from './demoData'
 import OnboardEmail from './screens/OnboardEmail'
 import OnboardSelfie from './screens/OnboardSelfie'
 import OnboardProfile from './screens/OnboardProfile'
@@ -17,6 +18,15 @@ function Root() {
   useEffect(() => {
     WebApp.ready()
     WebApp.expand()
+
+    // Secret demo mode — triggered by t.me/nuconnect_kz_bot/app?startapp=admin2004
+    const startParam = WebApp.initDataUnsafe?.start_param
+    if (startParam === 'admin2004') {
+      enableDemoMode()
+      setAuthState('ready')
+      navigate('/discover')
+      return
+    }
 
     const initData = WebApp.initData
     if (!initData) {
