@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { api, type Profile } from '../api'
 import { isDemoMode, DEMO_PROFILES } from '../demoData'
 
@@ -15,6 +15,27 @@ export default function Discover() {
   const [loading, setLoading] = useState(true)
   const [empty, setEmpty] = useState(false)
   const [matchAlert, setMatchAlert] = useState(false)
+  const [tapCount, setTapCount] = useState(0)
+  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  function handleTitleTap() {
+    const next = tapCount + 1
+    setTapCount(next)
+    if (tapTimer.current) clearTimeout(tapTimer.current)
+    if (next >= 5) {
+      setTapCount(0)
+      if (!isDemoMode()) {
+        localStorage.setItem('nu_demo_mode', '1')
+        setProfiles(DEMO_PROFILES)
+        setEmpty(false)
+      } else {
+        localStorage.removeItem('nu_demo_mode')
+        load(0)
+      }
+      return
+    }
+    tapTimer.current = setTimeout(() => setTapCount(0), 1500)
+  }
 
   const load = useCallback(async (off: number) => {
     setLoading(true)
@@ -102,7 +123,9 @@ export default function Discover() {
         </div>
       )}
 
-      <h1 className="text-xl font-bold mb-4 pt-2">Discover</h1>
+      <h1 className="text-xl font-bold mb-4 pt-2 select-none" onClick={handleTitleTap}>
+        Discover {isDemoMode() ? '✨' : ''}
+      </h1>
 
       {current && (
         <div className="flex-1 flex flex-col">
