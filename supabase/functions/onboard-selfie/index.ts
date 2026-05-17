@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
               }
             ]
           }],
-          generationConfig: { temperature: 0 }
+          generationConfig: { temperature: 0, response_mime_type: 'application/json' }
         }),
       }
     )

@@ -66,14 +66,14 @@ Deno.serve(async (req) => {
       .eq('telegram_id', telegramId)
       .maybeSingle()
 
-    // Create new session
+    // Upsert session — one active session per Telegram user, not one per open
     const { data: session, error: sessionErr } = await supabase
       .from('sessions')
-      .insert({
+      .upsert({
         telegram_id: telegramId,
         user_id: existingUser?.id ?? null,
         expires_at: expiresAt,
-      })
+      }, { onConflict: 'telegram_id' })
       .select('id')
       .single()
 
