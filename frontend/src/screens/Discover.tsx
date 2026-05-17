@@ -105,9 +105,10 @@ export default function Discover() {
     return (
       <div className="flex items-center justify-center min-h-screen p-6">
         <div className="text-center">
-          <div className="text-5xl mb-4">😴</div>
+          <div className="text-5xl mb-4 select-none" onClick={handleTitleTap}>😴</div>
           <h2 className="text-xl font-bold mb-2">No more profiles</h2>
           <p className="text-sm opacity-60">Check back later — more NU students join every day.</p>
+          {isDemoMode() && <p className="text-xs mt-3 opacity-40">✨ demo mode</p>}
         </div>
       </div>
     )
