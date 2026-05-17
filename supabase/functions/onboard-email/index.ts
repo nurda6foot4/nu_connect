@@ -21,7 +21,7 @@ async function sendOtpEmail(to: string, otp: string, resendKey: string) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'NU Connect <verify@nuconnect.app>',
+      from: 'NU Connect <onboarding@resend.dev>',
       to: [to],
       subject: 'Your NU Connect verification code',
       html: `
